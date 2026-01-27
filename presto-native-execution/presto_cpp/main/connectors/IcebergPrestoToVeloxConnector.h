@@ -16,6 +16,7 @@
 
 #include "presto_cpp/main/connectors/PrestoToVeloxConnector.h"
 #include "presto_cpp/presto_protocol/connector/iceberg/presto_protocol_iceberg.h"
+#include "velox/connectors/hive/iceberg/IcebergColumnHandle.h"
 
 namespace facebook::presto {
 
@@ -52,7 +53,8 @@ class IcebergPrestoToVeloxConnector final : public PrestoToVeloxConnector {
       const TypeParser& typeParser) const final;
 
  private:
-  std::vector<velox::connector::hive::HiveColumnHandlePtr> toHiveColumns(
+  std::vector<velox::connector::hive::iceberg::IcebergColumnHandlePtr>
+  toIcebergColumns(
       const protocol::List<protocol::iceberg::IcebergColumnHandle>&
           inputColumns,
       const TypeParser& typeParser) const;
