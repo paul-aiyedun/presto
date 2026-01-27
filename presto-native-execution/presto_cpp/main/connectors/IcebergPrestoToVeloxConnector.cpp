@@ -324,7 +324,7 @@ IcebergPrestoToVeloxConnector::toVeloxInsertTableHandle(
       createHandle->handle.connectorHandle->_type);
 
   const auto inputColumns =
-      toHiveColumns(icebergOutputTableHandle->inputColumns, typeParser);
+      toIcebergColumns(icebergOutputTableHandle->inputColumns, typeParser);
 
   return std::make_unique<
       velox::connector::hive::iceberg::IcebergInsertTableHandle>(
@@ -354,7 +354,7 @@ IcebergPrestoToVeloxConnector::toVeloxInsertTableHandle(
       insertHandle->handle.connectorHandle->_type);
 
   const auto inputColumns =
-      toHiveColumns(icebergInsertTableHandle->inputColumns, typeParser);
+      toIcebergColumns(icebergInsertTableHandle->inputColumns, typeParser);
 
   return std::make_unique<
       velox::connector::hive::iceberg::IcebergInsertTableHandle>(
@@ -370,18 +370,22 @@ IcebergPrestoToVeloxConnector::toVeloxInsertTableHandle(
           toFileCompressionKind(icebergInsertTableHandle->compressionCodec)));
 }
 
-std::vector<velox::connector::hive::HiveColumnHandlePtr>
-IcebergPrestoToVeloxConnector::toHiveColumns(
+std::vector<velox::connector::hive::iceberg::IcebergColumnHandlePtr>
+IcebergPrestoToVeloxConnector::toIcebergColumns(
     const protocol::List<protocol::iceberg::IcebergColumnHandle>& inputColumns,
     const TypeParser& typeParser) const {
-  std::vector<velox::connector::hive::HiveColumnHandlePtr> hiveColumns;
-  hiveColumns.reserve(inputColumns.size());
+  std::vector<velox::connector::hive::iceberg::IcebergColumnHandlePtr>
+      icebergColumns;
+  icebergColumns.reserve(inputColumns.size());
   for (const auto& columnHandle : inputColumns) {
-    hiveColumns.emplace_back(
+    auto hiveColumn =
         std::dynamic_pointer_cast<velox::connector::hive::HiveColumnHandle>(
-            std::shared_ptr(toVeloxColumnHandle(&columnHandle, typeParser))));
+            std::shared_ptr(toVeloxColumnHandle(&columnHandle, typeParser)));
+    icebergColumns.emplace_back(
+        velox::connector::hive::iceberg::convertToIcebergColumnHandle(
+            hiveColumn));
   }
-  return hiveColumns;
+  return icebergColumns;
 }
 
 } // namespace facebook::presto
