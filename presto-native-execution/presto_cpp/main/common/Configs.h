@@ -659,6 +659,8 @@ class SystemConfig : public ConfigBase {
       "enable_velox_task_logging"};
   static constexpr std::string_view kEnableVeloxExprSetLogging{
       "enable_velox_expression_logging"};
+  static constexpr std::string_view kLogVeloxTaskPlan{
+      "log-velox-task-plan"};
   static constexpr std::string_view kLocalShuffleMaxPartitionBytes{
       "shuffle.local.max-partition-bytes"};
   static constexpr std::string_view kShuffleName{"shuffle.name"};
@@ -1124,6 +1126,8 @@ class SystemConfig : public ConfigBase {
   bool enableVeloxTaskLogging() const;
 
   bool enableVeloxExprSetLogging() const;
+
+  bool logVeloxTaskPlan() const;
 
   bool useMmapAllocator() const;
 

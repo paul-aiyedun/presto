@@ -589,6 +589,11 @@ std::unique_ptr<TaskInfo> TaskManager::createOrUpdateTaskImpl(
 
       prestoTask->task = std::move(newExecTask);
       prestoTask->info.needsPlan = false;
+      if (SystemConfig::instance()->logVeloxTaskPlan()) {
+        LOG(INFO) << "############### Velox plan for task " << taskId
+                  << " ###############" << std::endl
+                  << planFragment.planNode->toString(true, true);
+      }
       startTask = true;
       prestoTask->createFinishTimeMs = getCurrentTimeMs();
     }
